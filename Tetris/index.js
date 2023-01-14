@@ -74,27 +74,35 @@ document.addEventListener('DOMContentLoaded', () => {
     undraw();
     currentPosition = currentPosition + width;
     draw();
+    freeze();
   }
+
+const freeze = () =>{
+    if(current.some(index => squares[currentPosition + index + width].classList.contains('taken'))){
+
+    }
+}
+
 const displayIndex = 0;
 const displayWidth = 4;
 const upNextTetrominoes = [
-    [1,displayWidth*1,displayWidth*2+1,2],//lTetromino
-    [0,displayWidth*1,displayWidth*1,displayWidth*2+1],//zTetromino
-    [1,displayWidth*1,displayWidth*1,displayWidth+2],//tTetromino
+    [1,displayWidth+1,displayWidth*2+1,2],//lTetromino
+    [0,displayWidth,displayWidth+1,displayWidth*2+1],//zTetromino
+    [1,displayWidth,displayWidth+1,displayWidth+2],//tTetromino
     [0,1,displayWidth,displayWidth+1],//oTetromino
     [1,displayWidth+1,displayWidth*2+1,displayWidth*3+1]//iTetromino
 ]
 
 
- const displaySquares = document.querySelectorAll('.mini-grid div')
-  const displayShape = () =>{
+const displaySquares = document.querySelectorAll('.mini-grid div')
+const displayShape = () =>{
 displaySquares.forEach((square)=> {
     square.classList.remove('tetromino');
     square.style.backgroundColor = '';
     })
 upNextTetrominoes[nextRandom].forEach(index => {
-    displaySquares[displayIndex * index].classList.add('tetromino');
-    displaySquares[displayIndex * index].style.backgroundColor = colors[nextRandom]
+    displaySquares[displayIndex + index].classList.add('tetromino');
+    displaySquares[displayIndex + index].style.backgroundColor = colors[nextRandom]
 })
   }
   
@@ -111,7 +119,15 @@ const moveRight = () =>{
     if(!isAtRightEdge) currentPosition +=1;
     draw();
     }
-  
+   const rotate =() =>{
+    undraw();
+    currentRotation ++;
+    if(currentRotation>3){
+        currentRotation = 0;
+    }
+    current = theTetrominoes[random][currentRotation];
+    draw();
+   }
 
 const control = (e) => {
     if(e.keyCode === 37){
@@ -126,10 +142,18 @@ const control = (e) => {
 }
 
   document.addEventListener('keyup', control)
+  
     startBtn.addEventListener('click',() => {
-        draw();
-        const timerId = setInterval(moveDown,1000);
+
+
+        if(timerId){
+            clearInterval(timerId);
+            timerId = null;
+        }else{
+            timerId = setInterval(moveDown,1000);
+            draw();
         nextRandom = Math.floor(Math.random()*theTetrominoes.length);
         displayShape();
+        }
     })
 })
